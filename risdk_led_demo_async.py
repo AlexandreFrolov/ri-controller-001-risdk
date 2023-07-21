@@ -1,5 +1,6 @@
 import sys
 from ctypes import *
+import time
 import platform
 import traceback
 
@@ -91,6 +92,41 @@ def led_pulse_frequency(lib, led, r, g, b, frequency, limit, async_mode):
     if errCode != 0:
         raise Exception(f"RI_SDK_exec_RGB_LED_FlashingWithFrequency failed with error code {errCode}: {err_msg(errTextC)}")        
 
+def led_get_state(lib, led):
+    lib.RI_SDK_exec_RGB_LED_GetState.argtypes = [c_int, POINTER(c_int), c_char_p]
+    state = c_int()
+    errTextC = create_string_buffer(1000)
+    errCode = lib.RI_SDK_exec_RGB_LED_GetState(led, state, errTextC)
+    if errCode != 0:
+        raise Exception(f"RI_SDK_exec_RGB_LED_GetState failed with error code {errCode}: {err_msg(errTextC)}")        
+    return state
+
+def led_get_color(lib, led):
+    lib.RI_SDK_exec_RGB_LED_GetColor.argtypes = [c_int, POINTER(c_int), POINTER(c_int), POINTER(c_int), c_char_p]
+    red = c_int()
+    green = c_int()
+    blue = c_int()
+    led_color = {
+     'red': red,
+     'green': green,
+     'blue': blue
+    }
+    errTextC = create_string_buffer(1000)
+    errCode = lib.RI_SDK_exec_RGB_LED_GetColor(led, red, green, blue, errTextC)
+    if errCode != 0:
+        raise Exception(f"RI_SDK_exec_RGB_LED_GetColor failed with error code {errCode}: {err_msg(errTextC)}")        
+    led_color['red'] = red
+    led_color['green'] = green
+    led_color['blue'] = blue
+    return led_color
+
+def led_stop(lib):
+    lib.RI_SDK_exec_RGB_LED_Stop.argtypes = [c_int, c_char_p]
+    errTextC = create_string_buffer(1000)
+    errCode = lib.RI_SDK_exec_RGB_LED_Stop(led, errTextC)
+    if errCode != 0:
+        raise Exception(f"RI_SDK_exec_RGB_LED_Stop failed with error code {errCode}: {err_msg(errTextC)}")        
+
 def led_cleanup(lib, led):
     lib.RI_SDK_DestroyComponent.argtypes = [c_int, c_char_p]
 
@@ -98,6 +134,11 @@ def led_cleanup(lib, led):
     errCode = lib.RI_SDK_DestroyComponent(led, errTextC)
     if errCode != 0:
         raise Exception(f"RI_SDK_DestroyComponent failed with error code {errCode}: {err_msg(errTextC)}")        
+
+def print_led_state(lib, led):
+    color = led_get_color(lib, led)
+    print(f"Led color: : {str(color['red'].value)}, {str(color['green'].value)}, {str(color['blue'].value)}")
+    print(f"Led state: : {str(led_get_state(lib, led).value)}")
 
 
 if __name__ == "__main__":
@@ -110,31 +151,52 @@ if __name__ == "__main__":
 
 #        add_led(lib, led, pwm, 15, 14, 13)
         add_led(lib, led, pwm, 14, 15, 13)
+        print_led_state(lib, led)
+
 
         print("Start pulse...")
 
-        led_pulse(lib, led, 255, 0, 0, 1500, False)
-        led_pulse(lib, led, 0, 255, 0, 1500, False)
-        led_pulse(lib, led, 0, 0, 255, 1500, False)
+        led_pulse(lib, led, 255, 0, 0, 1500, True)
+        time.sleep(0.3) 
+        print_led_state(lib, led)
+        time.sleep(2) 
+        led_pulse(lib, led, 0, 255, 0, 1500, True)
+        time.sleep(0.3) 
+        print_led_state(lib, led)
+        time.sleep(2) 
+        led_pulse(lib, led, 0, 0, 255, 1500, True)
+        time.sleep(0.3) 
+        print_led_state(lib, led)
+        time.sleep(2) 
 
         print("Start flicker...")
 
-        led_flicker(lib, led, 255, 0, 0, 500, 5, False)
-        led_flicker(lib, led, 0, 255, 0, 500, 5, False)
-        led_flicker(lib, led, 0, 0, 255, 500, 5, False)
+        led_flicker(lib, led, 255, 0, 0, 500, 5, True)
+        time.sleep(2) 
+        led_flicker(lib, led, 0, 255, 0, 500, 5, True)
+        time.sleep(2) 
+        led_flicker(lib, led, 0, 0, 255, 500, 5, True)
+        time.sleep(2) 
 
         print("Start pulse_pause...")
 
-        led_pulse_pause(lib, led, 255, 0, 0, 1000, 200, 3, False)
-        led_pulse_pause(lib, led, 0, 255, 0, 1000, 200, 3, False)
-        led_pulse_pause(lib, led, 0, 0, 255, 1000, 200, 3, False)
+        led_pulse_pause(lib, led, 255, 0, 0, 1000, 200, 3, True)
+        time.sleep(2) 
+        led_pulse_pause(lib, led, 0, 255, 0, 1000, 200, 3, True)
+        time.sleep(2) 
+        led_pulse_pause(lib, led, 0, 0, 255, 1000, 200, 3, True)
+        time.sleep(2) 
 
         print("Start pulse_frequency...")
 
-        led_pulse_frequency(lib, led, 255, 0, 0, 10, 10, False)
-        led_pulse_frequency(lib, led, 0, 255, 0, 20, 10, False)
-        led_pulse_frequency(lib, led, 0, 0, 255, 30, 10, False)
+        led_pulse_frequency(lib, led, 255, 0, 0, 10, 10, True)
+        time.sleep(2) 
+        led_pulse_frequency(lib, led, 0, 255, 0, 10, 10, True)
+        time.sleep(2) 
+        led_pulse_frequency(lib, led, 0, 0, 255, 10, 10, True)
+        time.sleep(2) 
 
+        led_stop(lib)
         led_cleanup(lib, led)
         cleanup(lib)
     except Exception as e:

@@ -159,13 +159,10 @@ if __name__ == "__main__":
     try:
         i2c = c_int()
         pwm = c_int()
-        sg90 = c_int()
 
         lib = init(i2c, pwm)
 
-#        servo_add(lib, pwm, sg90, "sg90", 0)
         sg90 = add_custom_servo(lib, pwm, sg90, 2350, 365, 200, 180, 0)
-
         print_servo_state(lib, sg90)
 
         print("\nsg90 поворот в крайние положения")

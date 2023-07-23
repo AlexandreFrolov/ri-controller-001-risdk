@@ -48,23 +48,23 @@ def cleanup(lib):
     if errCode != 0:
         raise Exception(f"RI_SDK_DestroySDK failed with error code {errCode}: {err_msg(errTextC)}")        
 
-def servo_add(lib, pwm, servo, servo_type, channel):
+def rservo_add(lib, pwm, servo, servo_type, channel):
     lib.RI_SDK_CreateModelComponent.argtypes = [c_char_p, c_char_p, c_char_p, POINTER(c_int), c_char_p]
-    lib.RI_SDK_LinkPWMToController.argtypes = [c_int, c_int, c_uint8, c_char_p]
+    lib.RI_SDK_LinkRServodriveToController.argtypes = [c_int, c_int, c_int, c_char_p]
 
     errTextC = create_string_buffer(1000)
     errCode = lib.RI_SDK_CreateModelComponent("executor".encode(), "servodrive".encode(), servo_type.encode(), servo, errTextC)
     if errCode != 0:
         raise Exception(f"RI_SDK_CreateModelComponent failed with error code {errCode}: {err_msg(errTextC)}")
 
-    errCode = lib.RI_SDK_LinkServodriveToController(servo, pwm, channel, errTextC)
+    errCode = lib.RI_SDK_LinkRServodriveToController(servo, pwm, channel, errTextC)
     if errCode != 0:
-        raise Exception(f"RI_SDK_LinkServodriveToController failed with error code {errCode}: {err_msg(errTextC)}")   
+        raise Exception(f"RI_SDK_LinkRServodriveToController failed with error code {errCode}: {err_msg(errTextC)}")   
 
 def add_custom_servo(lib, pwm, servo, MaxDt, MinDt, MaxSpeed, RangeAngle, channel):
     lib.RI_SDK_CreateDeviceComponent.argtypes = [c_char_p, c_char_p,  POINTER(c_int), c_char_p]
     lib.RI_SDK_exec_ServoDrive_CustomDeviceInit.argtypes = [c_int, c_int, c_int, c_int, c_int, c_char_p]
-    lib.RI_SDK_LinkPWMToController.argtypes = [c_int, c_int, c_uint8, c_char_p]
+    lib.RI_SDK_LinkRServodriveToController.argtypes = [c_int, c_int, c_int, c_char_p]
 
     servo = c_int()
     errTextC = create_string_buffer(1000)
@@ -80,7 +80,6 @@ def add_custom_servo(lib, pwm, servo, MaxDt, MinDt, MaxSpeed, RangeAngle, channe
     if errCode != 0:
         raise Exception(f"RI_SDK_LinkServodriveToController failed with error code {errCode}: {err_msg(errTextC)}")     
 
-    servo = servo
     return(servo)
 
 def servo_rotate(lib, servo, direction, speed, async_mode):
@@ -159,6 +158,7 @@ if __name__ == "__main__":
     try:
         i2c = c_int()
         pwm = c_int()
+        sg90 = c_int()
 
         lib = init(i2c, pwm)
 

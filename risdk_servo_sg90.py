@@ -159,87 +159,89 @@ if __name__ == "__main__":
     try:
         i2c = c_int()
         pwm = c_int()
-        mg90s = c_int()
+        sg90 = c_int()
 
         lib = init(i2c, pwm)
 
-        servo_add(lib, pwm, mg90s, "mg90s", 0)
-        print_servo_state(lib, mg90s)
+#        servo_add(lib, pwm, sg90, "sg90", 0)
+        sg90 = add_custom_servo(lib, pwm, sg90, 2350, 365, 200, 180, 0)
 
-        print("\nMG90S поворот в крайние положения")
+        print_servo_state(lib, sg90)
 
-        servo_rotate(lib, mg90s, 0, 200, False)
+        print("\nsg90 поворот в крайние положения")
+
+        servo_rotate(lib, sg90, 0, 200, False)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
-        print_servo_state(lib, mg90s)
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
+        print_servo_state(lib, sg90)
 
-        servo_rotate(lib, mg90s, 1, 200, False)
+        servo_rotate(lib, sg90, 1, 200, False)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
 
-        servo_set_middle(lib, mg90s)
+        servo_set_middle(lib, sg90)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
 
 
-        print("\nMG90S управление через длительность импульсов")
+        print("\nsg90 управление через длительность импульсов")
 
-        servo_turn_by_pulse(lib, mg90s, 2650)
+        servo_turn_by_pulse(lib, sg90, 2350)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
 
-        servo_turn_by_pulse(lib, mg90s, 365)
+        servo_turn_by_pulse(lib, sg90, 365)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
         
-        servo_turn_by_pulse(lib, mg90s,1500)
+        servo_turn_by_pulse(lib, sg90,1500)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
         
 
-        print("\nMG90S Минимальный шаг")
+        print("\nsg90 Минимальный шаг")
 
-        servo_set_middle(lib, mg90s)
+        servo_set_middle(lib, sg90)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
 
-        servo_rotate_min_step(lib, mg90s, 1, 100, False)
+        servo_rotate_min_step(lib, sg90, 1, 100, False)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
 
-        servo_rotate_min_step(lib, mg90s, 0, 100, False)
+        servo_rotate_min_step(lib, sg90, 0, 100, False)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
 
-        print("\nMG90S управление через Duty")
+        print("\nsg90 управление через Duty")
 
-        servo_turn_by_duty(lib, mg90s, 75)
+        servo_turn_by_duty(lib, sg90, 75)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
 
-        servo_turn_by_duty(lib, mg90s, 300)
+        servo_turn_by_duty(lib, sg90, 278)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
 
-        servo_turn_by_duty(lib, mg90s, 540)
+        servo_turn_by_duty(lib, sg90, 481)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
      
-        print("\nMG90S поворот на заданный угол")
+        print("\nsg90 поворот на заданный угол")
 
-        servo_set_middle(lib, mg90s)
+        servo_set_middle(lib, sg90)
         time.sleep(2) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
 
-        servo_turn_by_angle(lib, mg90s, 90, 200, False)
+        servo_turn_by_angle(lib, sg90, 90, 200, False)
         time.sleep(1) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
 
-        servo_turn_by_angle(lib, mg90s, -90, 300, False)
+        servo_turn_by_angle(lib, sg90, -90, 200, False)
         time.sleep(1) 
-        print("mg90s angle: " + str(servo_get_angle(lib, mg90s)))
+        print("sg90 angle: " + str(servo_get_angle(lib, sg90)))
 
-        cleanup_servo(lib, mg90s)
+        cleanup_servo(lib, sg90)
         cleanup(lib)
     except Exception as e:
         print(traceback.format_exc() + "===> ", str(e))

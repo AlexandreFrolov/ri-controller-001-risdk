@@ -118,11 +118,11 @@ def stop_rservo(lib, rservo):
     if errCode != 0:
         raise Exception(f"RI_SDK_exec_RServoDrive_Stop failed with error code {errCode}: {err_msg(errTextC)}")
 
-def rservo_get_state(lib, кservo):
+def rservo_get_state(lib, rservo):
     lib.RI_SDK_exec_RServoDrive_GetState.argtypes = [c_int, POINTER(c_int), c_char_p]
     errTextC = create_string_buffer(1000)
     state = c_int()
-    errCode = lib.RI_SDK_exec_RServoDrive_GetState(кservo, state, errTextC)
+    errCode = lib.RI_SDK_exec_RServoDrive_GetState(rservo, state, errTextC)
     if errCode != 0:
         raise Exception(f"RI_SDK_exec_RServoDrive_GetState failed with error code {errCode}: {err_msg(errTextC)}")
     return state

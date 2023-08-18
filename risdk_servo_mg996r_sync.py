@@ -13,7 +13,7 @@ def init(i2c, pwm):
         if platform_os == "Windows":
             lib = cdll.LoadLibrary("C:\Windows\system32\librisdk.dll")
         if platform_os == "Linux":
-            lib = cdll.LoadLibrary("/usr/local/robohand_remote_control/librisdk.so")
+            lib = cdll.LoadLibrary("/usr/local/robointellect_sdk/ri_sdk/librisdk.so")
     except OSError as e:
         raise Exception("Failed to load: " + str(e))
 
